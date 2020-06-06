@@ -1,0 +1,1 @@
+@java -cp "D:\github\MySQL\Java的JDBC编程\out\production\Java的JDBC编程;D:\github\MySQL\Java的JDBC编程\lib\mysql-connector-java-5.1.47.jar" com.yuehu.MySQL.Client %*
