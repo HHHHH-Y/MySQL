@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description: 模拟一个 MySQL 的客户端
  * User: HHH.Y
  * Date: 2020-06-06
  */
@@ -29,28 +29,46 @@ public class Client {
             printUsageAndExit(); // 打印使用说明并直接退出
         }
 
+        // 解析参数, 获取连接数据库的信息
         parseArgument(args);
 
         // 1. 进行数据库连接
         Class.forName("com.mysql.jdbc.Driver");
         String url = String.format("jdbc:mysql://%s:%d/%s?useSSL=false&characterEncoding=utf8",host, port, defaultDatabaseName);
         try {
+            // 一次连接
             Connection connection = DriverManager.getConnection(url, user, password);
             printWelcome();
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("mysql> ");
+            // 进入之前所谓的 mysql 界面
+            System.out.print("mysql> ");
+            // 一次连接, 多次 sql 执行
             while (true) {
                 String cmd = scanner.nextLine();
+                // 模拟, 使用 quit 可以退出
+                // quit 不需要输入 分号
                 if(cmd.equalsIgnoreCase("quit")) {
                     break;
                 }
+
+                // 模拟真实的 mysql 中, 不输入 分号, 一行命令就不结束的现象
+                while (!cmd.endsWith(";")) {
+                    System.out.print("   -> ");
+                    cmd += scanner.nextLine();
+                }
+
+                // 分号只是 mysql 程序的要求, 不是 sql 语言的要求
+                cmd = cmd.substring(0, cmd.length() - 1);
+                System.out.println(cmd);
+
+                // 多次执行 sql
                 if(cmd.startsWith("select") || cmd.startsWith("show")) {
                     executeQuery(connection, cmd);
                 } else {
                     executeUpdate(connection, cmd);
                 }
-                System.out.println("mysql> ");
+                System.out.print("mysql> ");
             }
 
             connection.close();
@@ -59,21 +77,45 @@ public class Client {
         }
     }
 
-    private static void executeUpdate(Connection connection, String cmd) {
-
+    private static void executeUpdate(Connection connection, String cmd) throws SQLException {
+        Statement statement = connection.createStatement();
+        int affectRows = statement.executeUpdate(cmd);
+        System.out.printf("Query Ok, %d row affected%n", affectRows);
+        statement.close();
     }
 
     private static void executeQuery(Connection connection, String cmd) throws SQLException {
+        long b = System.currentTimeMillis();
+
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(cmd);
+
         int columnCount = resultSet.getMetaData().getColumnCount(); // 一共多少列, 拿到所有的列数
+        // 打印表头 - 打印列的名称
+        for (int i = 0; i < columnCount; i++) {
+            String label = resultSet.getMetaData().getColumnLabel(i + 1);
+            if(i != columnCount - 1) {
+                System.out.print(label + ", ");
+            } else {
+                System.out.println(label);
+            }
+        }
+        // 依次去遍历每一行, 打印每一行的结果
+        int rowCount = 0;
         while (resultSet.next()) {
+            rowCount++;
             for (int i = 0; i < columnCount; i++) {
                 String val = resultSet.getString(i + 1);
-                System.out.println(val + ",");
+                if(i != columnCount - 1) {
+                    System.out.print(val + ", ");
+                } else {
+                    System.out.println(val);
+                }
             }
-            System.out.println();
         }
+        long e =  System.currentTimeMillis();
+        System.out.printf("%d rows int set (%.2f sec)%n", rowCount, (e - b) / 1000.0);
+        resultSet.close();
         statement.close();
     }
 
