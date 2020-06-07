@@ -12,7 +12,8 @@ import java.util.Scanner;
  * 使用 Statement 有可能会产生 sql 注入 -- sql 漏洞的一种
  * SQL 注入:
  * 1. 由于我们在拼接 sql 时, 有漏洞/有 BUG
- * 2. 恶意用户使用一些特殊的输入导致执行一些不是我们预期之内的 sql 
+ * 2. 恶意用户使用一些特殊的输入导致执行一些不是我们预期之内的 sql
+ * 
  * prepareStatement 可以有效的防止 sql 注入
  * User: HHH.Y
  * Date: 2020-06-07

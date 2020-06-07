@@ -15,8 +15,10 @@ public class JDBCDemo {
         String user = "root";
         String password = "huyuelover1017";
 
+        // 注册驱动
         Class.forName("com.mysql.jdbc.Driver");
 
+        // 进行数据库连接
         {
            /* // 不使用 try_with_resource 的写法
             Connection connection = DriverManager.getConnection(url, user, password);
@@ -37,7 +39,7 @@ public class JDBCDemo {
         }
 
 
-        // 使用 try_with_resource 的写法, 1.8 之后支持, 目的就是简化代码
+        // 使用 try_with_resource 的写法, JDK 1.8 之后支持, 目的就是简化代码
         // 就不用再关心 close 方法
         {
             try(Connection connection = DriverManager.getConnection(url, user, password)) {
