@@ -23,10 +23,7 @@ import java.util.Scanner;
  * Date: 2020-06-07
  */
 public class Main {
-    // 当前登录用户信息
-    // 没有登录 user == null
-    // 否则指向具体的用户对象
-    //private static User user = null;
+
     private static List<String> featureList = new ArrayList<>(); // 使用集合 featureList, 用于存放菜单中的信息
     private static List<Action> actionsList = new ArrayList<>(); // 使用集合 actionsList, 用于存放执行动作信息
 
@@ -44,6 +41,10 @@ public class Main {
 
     private static void initActionList() {
         actionsList.add(new UserRegisterAction());
+        actionsList.add(new UserLoginAction());
+        actionsList.add(new ArticleListAction());
+        actionsList.add(new ArticlePublishAction());
+        actionsList.add(new ArticleDetailAction());
     }
 
     private static void showMenu() {
@@ -90,14 +91,4 @@ public class Main {
         }
     }
 
-    // 用户注册的实现类
-    static class UserRegisterAction implements Action {
-        @Override
-        public void run() {
-            userRegister();
-        }
-    }
-    private static void userRegister() {
-        System.out.println("开始用户注册");
-    }
 }
